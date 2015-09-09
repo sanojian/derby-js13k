@@ -15,13 +15,14 @@ socketio.on('connection', function(socket){
 		players++;
 
 		playerName = data;
-		socket.emit('players', players);
+		socketio.emit('players', players);
+		socket.emit('leaders', highScores);
 	});
 
 	socket.on('disconnect', function(){
 		players = Math.max(0, players-1);
 
-		socket.emit('players', players);
+		socket.broadcast.emit('players', players);
 	});
 
 	socket.on('score', function(data){
@@ -35,6 +36,6 @@ socketio.on('connection', function(socket){
 			highScores.pop();
 		}
 
-		socket.emit('leaders', highScores);
+		socket.broadcast.emit('leaders', highScores);
 	});
 });

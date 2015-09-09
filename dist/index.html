@@ -7,7 +7,7 @@
     <style>
         html, body { margin:0; padding:0; overflow:hidden }
         body { width: 100%; height: 100%; background: #346524 }
-        #divHighScoreEntry {
+        .popup {
             position: absolute;
             font-family: Impact, Charcoal, sans-serif;
             background: #DEEED6;
@@ -15,11 +15,19 @@
             border-radius: 10px;
             font-size: 3em;
             padding: 40px;
+        }
+        #divHighScoreEntry {
             display: none;
         }
-        #divHighScoreEntry > input {
+         #tdHighScores {
+             font-size: 0.5em;
+        }
+        .bigInput {
             font-family: Impact, Charcoal, sans-serif;
             font-size: 1em;
+        }
+        #divSplash {
+
         }
     </style>
 </head>
@@ -43,9 +51,23 @@
         </defs>
     </svg>
     <canvas id="mudCanvas" width="256" height="256" style="display: none;"></canvas>
-    <div id="divHighScoreEntry">
+    <div id="divHighScoreEntry" class="popup">
         <span>New high score!</span><br>
-        <input onchange="postHighScore()" placeholder="Your name" />
+        <input class="bigInput" onchange="postHighScore()" placeholder="Your name" />
+    </div>
+    <div id="divSplash" class="popup">
+        <table>
+            <tr>
+                <td align="center"><u>High Scores</u></td>
+                <td align="right" rowspan="2">
+                    <button class="bigInput" onclick="goFullScreen()">Fullscreen</button><br><br>
+                    <button class="bigInput" onclick="startGame()">Start</button>
+                </td>
+            </tr>
+            <tr>
+                <td id="tdHighScores"></td>
+            </tr>
+        </table>
     </div>
 </body>
 

@@ -32,6 +32,7 @@ var hasTouch = !!('ontouchstart' in window);
 // enable vibration support
 navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 
+var highScoreDiv, splashDiv;
 
 function init() {
 
@@ -42,9 +43,13 @@ function init() {
 	svg1.style.width = innerWidth;
 	svg1.style.height = innerHeight;
 
-	var highScoreDiv = document.getElementById('divHighScoreEntry');
+	highScoreDiv = document.getElementById('divHighScoreEntry');
 	highScoreDiv.style.left = (innerWidth/2 - highScoreDiv.offsetWidth/2) + 'px';
 	highScoreDiv.style.top = (innerHeight/2 - highScoreDiv.offsetHeight/2) + 'px';
+
+	splashDiv = document.getElementById('divSplash');
+	splashDiv.style.left = (innerWidth/2 - splashDiv.offsetWidth/2) + 'px';
+	splashDiv.style.top = (innerHeight/2 - splashDiv.offsetHeight/2) + 'px';
 
 	var scaleX = innerWidth / ARENA_WIDTH;
 	var scaleY = innerHeight / ARENA_HEIGHT;
@@ -57,17 +62,6 @@ function init() {
 	document.body.oncopy = function() { return false; };
 	document.body.oncut = function() { return false; };
 	document.body.onpaste = function() { return false; };
-
-	// go full-screen
-	if (svg1.requestFullscreen) {
-		svg1.requestFullscreen();
-	} else if (svg1.webkitRequestFullscreen) {
-		svg1.webkitRequestFullscreen();
-	} else if (svg1.mozRequestFullScreen) {
-		svg1.mozRequestFullScreen();
-	} else if (svg1.msRequestFullscreen) {
-		svg1.msRequestFullscreen();
-	}
 
 	// wall N
 	walls.push(new RigidBody({ x: ARENA_WIDTH / 2, y: 5 }, 10000, true));
@@ -168,20 +162,31 @@ function init() {
 		texts.push({ time: 0, active: false, svg: dmgText, x: 0, y: 0 });
 	}
 
-	if (hasTouch) {
+	//if (hasTouch) {
 		createMobileControls();
-	}
+	//}
 
 	car = new CarPlayer(Vec.divide(new Vec(5, 8), 2), 10, '#597DCE', '#6DC2CA');
 
 	cars.push(car);
 
 	initSteering();
-	loadLevel(1);
+	loadLevel(0);
 
 	try {
 		connect();
 	} catch (ex) { console.log(ex); }
+}
+
+function startGame() {
+	loading = true;
+	keepPlaying = false;
+
+	splashDiv.style.display = 'none';
+	// time for old level to unload
+	setTimeout(function() {
+		loadLevel(1);
+	}, 100);
 }
 
 function loadLevel(levelId) {

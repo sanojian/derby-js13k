@@ -49,11 +49,12 @@ function createMobileControls() {
 
 	function createArrow(x, y, rotation, overHandler, outHandler) {
 		var arrow = document.createElementNS(svgNS, 'path');
-		arrow.style.fill = '#ffff00';
-		arrow.style.stroke = '#000000';
+		arrow.style.fill = '#DAD45E';
+		arrow.style.stroke = '#4E4A4E';
 		arrow.style.strokeWidth = 1;
 		arrow.style.opacity = 0.6;
 		arrow.setAttribute('d', 'M 0,40 L 20,0 L 40,40 z');
+		arrow.setAttribute('stroke-linejoin', 'round');
 		arrow.setAttribute('transform', 'translate(' + x + ' ' + y + ') rotate(' + rotation + ' 20 20)');
 		arrow.addEventListener('touchstart', overHandler);
 		arrow.addEventListener('touchend', outHandler);
@@ -61,11 +62,18 @@ function createMobileControls() {
 		svg1.appendChild(arrow);
 	}
 
-	createArrow(0, 20, 0, function(evt) { KEY_UP = true; evt.preventDefault(); }, function (evt) { KEY_UP = false; evt.preventDefault(); });
-	createArrow(0, 70, 180, function(evt) { KEY_DOWN = true; evt.preventDefault(); }, function (evt) { KEY_DOWN = false; evt.preventDefault(); });
+	var arenaScale = ARENA_WIDTH / ARENA_HEIGHT;
+	var screenScale = innerWidth / innerHeight;
+	var edgeX = 0;
+	if (screenScale > arenaScale) {
+		edgeX = (screenScale - arenaScale) * ARENA_WIDTH / 4;
+	}
 
-	createArrow(ARENA_WIDTH-40, 20, 90, function(evt) { KEY_RIGHT = true; evt.preventDefault(); }, function (evt) { KEY_RIGHT = false; evt.preventDefault(); });
-	createArrow(ARENA_WIDTH-90, 20, 270, function(evt) { KEY_LEFT = true; evt.preventDefault(); }, function (evt) { KEY_LEFT = false; evt.preventDefault(); });
+	createArrow(-edgeX, 20, 0, function(evt) { KEY_UP = true; evt.preventDefault(); }, function (evt) { KEY_UP = false; evt.preventDefault(); });
+	createArrow(-edgeX, 70, 180, function(evt) { KEY_DOWN = true; evt.preventDefault(); }, function (evt) { KEY_DOWN = false; evt.preventDefault(); });
+
+	createArrow(ARENA_WIDTH-40+edgeX, 70, 90, function(evt) { KEY_RIGHT = true; evt.preventDefault(); }, function (evt) { KEY_RIGHT = false; evt.preventDefault(); });
+	createArrow(ARENA_WIDTH-90+edgeX, 70, 270, function(evt) { KEY_LEFT = true; evt.preventDefault(); }, function (evt) { KEY_LEFT = false; evt.preventDefault(); });
 }
 
 function addText(x, y, val, fontSize, color, parentNode) {
@@ -174,4 +182,17 @@ function addFire(target) {
 	nextFire.svg.setAttribute('rx', 2);
 	nextFire.svg.setAttribute('ry', 2);
 	nextFire.svg.style.opacity = 1;
+}
+
+function goFullScreen() {
+	// go full-screen
+	if (svg1.requestFullscreen) {
+		svg1.requestFullscreen();
+	} else if (svg1.webkitRequestFullscreen) {
+		svg1.webkitRequestFullscreen();
+	} else if (svg1.mozRequestFullScreen) {
+		svg1.mozRequestFullScreen();
+	} else if (svg1.msRequestFullscreen) {
+		svg1.msRequestFullscreen();
+	}
 }

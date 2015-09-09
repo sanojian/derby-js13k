@@ -18,6 +18,16 @@ function connect() {
 
 function showLeaders(data) {
 	highScores = data;
+	var html = '<table>';
+	for (var i=0; i<highScores.length; i++) {
+		html += '<tr><td>' + (i+1) + '</td>' +
+			'<td>' + highScores[i].name + '</td>' +
+			'<td align="right">' + highScores[i].score + '</td></tr>';
+	}
+	html += '</table>';
+
+	var scoreTable = document.getElementById('tdHighScores');
+	scoreTable.innerHTML = html;
 	console.log(data);
 }
 

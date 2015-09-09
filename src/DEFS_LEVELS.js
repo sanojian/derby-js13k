@@ -4,8 +4,15 @@
 
 var DEF_LEVELS = {
 
+	0: {
+		position: {
+			x: 60, y: 60, angle: Math.PI/2
+		},
+		opponents: [
+			{ x: 90, y: 60, angle: Math.PI/2, ai: null }
+		]
+	},
 	1: {
-		name: 'Learn the Ropes',
 		position: {
 			x: 60, y: 60, angle: Math.PI/2
 		},
@@ -15,7 +22,6 @@ var DEF_LEVELS = {
 		]
 	},
 	2: {
-		name: 'More Advanced',
 		position: {
 			x: 60, y: 60, angle: Math.PI/2
 		},
