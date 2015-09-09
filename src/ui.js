@@ -45,6 +45,29 @@ function initSteering() {
 	};
 }
 
+function createMobileControls() {
+
+	function createArrow(x, y, rotation, overHandler, outHandler) {
+		var arrow = document.createElementNS(svgNS, 'path');
+		arrow.style.fill = '#ffff00';
+		arrow.style.stroke = '#000000';
+		arrow.style.strokeWidth = 1;
+		arrow.style.opacity = 0.6;
+		arrow.setAttribute('d', 'M 0,40 L 20,0 L 40,40 z');
+		arrow.setAttribute('transform', 'translate(' + x + ' ' + y + ') rotate(' + rotation + ' 20 20)');
+		arrow.addEventListener('touchstart', overHandler);
+		arrow.addEventListener('touchend', outHandler);
+
+		svg1.appendChild(arrow);
+	}
+
+	createArrow(0, 20, 0, function(evt) { KEY_UP = true; evt.preventDefault(); }, function (evt) { KEY_UP = false; evt.preventDefault(); });
+	createArrow(0, 70, 180, function(evt) { KEY_DOWN = true; evt.preventDefault(); }, function (evt) { KEY_DOWN = false; evt.preventDefault(); });
+
+	createArrow(ARENA_WIDTH-40, 20, 90, function(evt) { KEY_RIGHT = true; evt.preventDefault(); }, function (evt) { KEY_RIGHT = false; evt.preventDefault(); });
+	createArrow(ARENA_WIDTH-90, 20, 270, function(evt) { KEY_LEFT = true; evt.preventDefault(); }, function (evt) { KEY_LEFT = false; evt.preventDefault(); });
+}
+
 function addText(x, y, val, fontSize, color, parentNode) {
 	var newText = document.createElementNS(svgNS, 'text');
 	newText.setAttributeNS(null, 'x', x);

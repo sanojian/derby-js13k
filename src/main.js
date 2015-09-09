@@ -27,6 +27,12 @@ var keepPlaying = true;
 var loading = false;
 var highScores = [];
 
+// check for mobile environment
+var hasTouch = !!('ontouchstart' in window);
+// enable vibration support
+navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+
+
 function init() {
 
 	// create muddy background
@@ -45,6 +51,23 @@ function init() {
 	var scale = Math.min(scaleX, scaleY);
 
 	svg1.setAttribute('viewBox', '0 0 ' + ARENA_WIDTH + ' ' + ARENA_HEIGHT);
+
+
+	// prevent copy paste controls
+	document.body.oncopy = function() { return false; };
+	document.body.oncut = function() { return false; };
+	document.body.onpaste = function() { return false; };
+
+	// go full-screen
+	if (svg1.requestFullscreen) {
+		svg1.requestFullscreen();
+	} else if (svg1.webkitRequestFullscreen) {
+		svg1.webkitRequestFullscreen();
+	} else if (svg1.mozRequestFullScreen) {
+		svg1.mozRequestFullScreen();
+	} else if (svg1.msRequestFullscreen) {
+		svg1.msRequestFullscreen();
+	}
 
 	// wall N
 	walls.push(new RigidBody({ x: ARENA_WIDTH / 2, y: 5 }, 10000, true));
@@ -145,6 +168,9 @@ function init() {
 		texts.push({ time: 0, active: false, svg: dmgText, x: 0, y: 0 });
 	}
 
+	if (hasTouch) {
+		createMobileControls();
+	}
 
 	car = new CarPlayer(Vec.divide(new Vec(5, 8), 2), 10, '#597DCE', '#6DC2CA');
 

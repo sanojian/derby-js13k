@@ -53,12 +53,14 @@ function applyCollision(car1, car2, collisionV, overlapV, p1, p2) {
 	car1.velocity = car1.velocity.subtract(Vec.multiply(impulse, 1 / car1.mass));
 	car1.angularVelocity = (cp.x * rv.y - cp.y * rv.x) / (cp.x * cp.x + cp.y * cp.y);
 	car1.handleCollision();
+	var dmg = j;
 	if (car2.immovable && car1 === car) {
 		// walls do less damage to player
-		car1.damagePoint(collisionV, j/50, worldCp, p1);
+		dmg = j/50;
 	}
-	else {
-		car1.damagePoint(collisionV, j, worldCp, p1);
+	var damage = car1.damagePoint(collisionV, dmg, worldCp, p1);
+	if (car1 === car) {
+		navigator.vibrate(Math.round(damage));
 	}
 
 	if (!car2.immovable) {
@@ -66,7 +68,7 @@ function applyCollision(car1, car2, collisionV, overlapV, p1, p2) {
 		car2.angularVelocity = (cp.x * -rv.y - cp.y * -rv.x) / (cp.x * cp.x + cp.y * cp.y);
 		car2.handleCollision();
 		if (car2.health > 0) {
-			var damage = car2.damagePoint(collisionV, j, worldCp, p2);
+			damage = car2.damagePoint(collisionV, j, worldCp, p2);
 			if (car1 === car) {
 				score += Math.abs(Math.round(damage));
 				scoreText.childNodes[0].textContent = 'Score: ' + score;
