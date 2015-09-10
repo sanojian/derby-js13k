@@ -53,7 +53,8 @@
     <canvas id="mudCanvas" width="256" height="256" style="display: none;"></canvas>
     <div id="divHighScoreEntry" class="popup">
         <span>New high score!</span><br>
-        <input class="bigInput" onchange="postHighScore()" placeholder="Your name" />
+        <input id="txtPlayerName" class="bigInput" placeholder="Your name" /><br>
+        <button class="bigInput" onclick="postHighScore()">Submit</button>
     </div>
     <div id="divSplash" class="popup">
         <table>

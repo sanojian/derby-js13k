@@ -13,7 +13,6 @@ function connect() {
 	socket.on('leaders', showLeaders);
 	socket.on('players', showPlayers);
 	socket.on('disconnect', onDisconnect);
-	socket.emit('playerInfo', playerName );
 }
 
 function showLeaders(data) {
@@ -35,8 +34,15 @@ function showPlayers(data) {
 	playersText.childNodes[0].textContent = 'Players: ' + data;
 }
 
-function postHighScore(input) {
+function postHighScore() {
+	var playerName = document.getElementById('txtPlayerName').value;
+	if (!playerName) {
+		return;
+	}
 
+	highScoreDiv.style.display = 'none';
+	localStorage.derbyPlayerName = playerName;
+	handleEndGame();
 }
 
 function onDisconnect() {

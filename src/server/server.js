@@ -6,18 +6,14 @@ var socketio = require('sandbox-io');
 log('Loaded sandbox-io', socketio);
 
 var players = 0;
-var highScores = [];
+var highScores = db('highScores') || [];
 
 socketio.on('connection', function(socket){
 
-	var playerName = '';
-	socket.on('playerInfo', function(data){
-		players++;
+	players++;
 
-		playerName = data;
-		socketio.emit('players', players);
-		socket.emit('leaders', highScores);
-	});
+	socketio.emit('players', players);
+	socket.emit('leaders', highScores);
 
 	socket.on('disconnect', function(){
 		players = Math.max(0, players-1);
@@ -25,17 +21,33 @@ socketio.on('connection', function(socket){
 		socket.broadcast.emit('players', players);
 	});
 
-	socket.on('score', function(data){
-		players = Math.max(0, players-1);
+	socket.on('getScores', function() {
+		socket.emit('leaders', highScores);
+	});
 
-		highScores.push({ name: playerName, score: data });
+	socket.on('score', function(data){
+
+		for (var i=0; i<highScores.length; i++) {
+			if (highScores[i].name === data.name) {
+				if (data.score > highScores[i].score) {
+					highScores[i] = data;
+					return;
+				}
+				else {
+					return;
+				}
+			}
+		}
+
+		highScores.push(data);
 		highScores.sort(function(a, b) {
 			return b.score - a.score;
 		});
-		while (highScores.length > 20) {
+		while (highScores.length > 10) {
 			highScores.pop();
 		}
 
+		db('highScores', highScores);
 		socket.broadcast.emit('leaders', highScores);
 	});
 });

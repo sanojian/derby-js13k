@@ -182,6 +182,8 @@ function startGame() {
 	loading = true;
 	keepPlaying = false;
 
+	score = 0;
+	scoreText.childNodes[0].textContent = 'Score: ' + score;
 	splashDiv.style.display = 'none';
 	// time for old level to unload
 	setTimeout(function() {
@@ -356,21 +358,38 @@ function step() {
 	else if (keepPlaying && !loading && car.health < 0) {
 		loading = true;
 		setTimeout(function() {
-			keepPlaying = false;
-			setTimeout(function() {
-				try {
-					socket.emit('score', score);
-				} catch (ex) { console.log(ex); }
-				car.health = 1000;
-				score = 0;
-				scoreText.childNodes[0].textContent = 'Score: ' + score;
-				healthBar.setAttribute('width', healthBarMaxWidth);
-				loadLevel(1);
-			}, 1000);
+			handleEndGame();
 		}, 3000);
 	}
 
 	if (keepPlaying) {
 		requestAnimationFrame(step);
 	}
+}
+
+function handleEndGame() {
+	keepPlaying = false;
+
+	var bHighScore = highScores.length ? highScores[highScores.length-1].score < score : true;
+
+	if (bHighScore && !localStorage.derbyPlayerName) {
+		highScoreDiv.style.display = 'block';
+		return;
+	}
+	setTimeout(function() {
+		try {
+			if (bHighScore) {
+				socket.emit('score', { name: localStorage.derbyPlayerName, score: score });
+			}
+			socket.emit('getScores');
+		} catch (ex) {
+			console.log(ex);
+		}
+		car.health = 1000;
+		healthBar.setAttribute('width', healthBarMaxWidth);
+		loadLevel(0);
+		splashDiv.style.display = 'block';
+
+	}, 1000);
+
 }
