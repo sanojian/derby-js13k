@@ -1,7 +1,7 @@
 /**
  * Created by jonas on 2015-08-16.
  *
- * ported from bzroom on http://www.gamedev.net/topic/470497-2d-car-physics-tutorial/
+ * ported from tutorial by bzroom on http://www.gamedev.net/topic/470497-2d-car-physics-tutorial/
  */
 
 function Wheel(position, radius) {
@@ -115,6 +115,19 @@ Vehicle.prototype.setSteering = function(steering) {
 Vehicle.prototype.setThrottle = function(throttle, allWheel) {
 	var torque = 80;
 
+	// if opposite of travel, apply braking too
+	if (throttle && this === car) {
+		var relativeGroundSpeed = this.worldToRelative(this.velocity);
+		if (relativeGroundSpeed.y > 0 && throttle < 0) {
+			// forwards and car is in reverse
+			this.velocity = Vec.multiply(this.velocity, 0.97);
+		}
+		else if (relativeGroundSpeed.y < 0 && throttle > 0) {
+			// backwards and car is in gear
+			this.velocity = Vec.multiply(this.velocity, 0.97);
+		}
+	}
+
 	//apply transmission torque to back wheels
 	if (allWheel) {
 		this.wheels[0].addTransmissionTorque(throttle * torque);
@@ -123,9 +136,11 @@ Vehicle.prototype.setThrottle = function(throttle, allWheel) {
 
 	this.wheels[2].addTransmissionTorque(throttle * torque);
 	this.wheels[3].addTransmissionTorque(throttle * torque);
+
 };
 
 Vehicle.prototype.setBrakes = function(brakes) {
+	console.log('barkes');
 	var brakeTorque = 20;
 
 	//apply brake torque apposing wheel vel

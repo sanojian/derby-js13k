@@ -34,12 +34,17 @@ ArcadeAudio.prototype.loop = function( key ) {
 	var soundData = sound.length > 1 ? sound[ Math.floor( Math.random() * sound.length ) ] : sound[ 0 ];
 	var index = soundData.tick;
 	soundData.pool[ index ].loop = true;
-	soundData.pool[ index ].volume = 0.5;
 	soundData.pool[ index ].play();
 
 	soundData.tick < soundData.count - 1 ? soundData.tick++ : soundData.tick = 0;
 
 	return index;
+};
+
+ArcadeAudio.prototype.volume = function( key, index, volume ) {
+	var sound = this.sounds[ key ];
+	var soundData = sound.length > 1 ? sound[ Math.floor( Math.random() * sound.length ) ] : sound[ 0 ];
+	soundData.pool[ index ].volume = volume;
 };
 
 ArcadeAudio.prototype.stop = function( key, index ) {

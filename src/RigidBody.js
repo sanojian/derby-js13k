@@ -1,7 +1,7 @@
 /**
  * Created by jonas on 2015-08-16.
  *
- * ported from bzroom on http://www.gamedev.net/topic/470497-2d-car-physics-tutorial/
+ * ported from tutorial by bzroom on http://www.gamedev.net/topic/470497-2d-car-physics-tutorial/
  */
 
 function RigidBody(halfSize, mass, immovable) {
@@ -30,6 +30,12 @@ function RigidBody(halfSize, mass, immovable) {
 	this.rect.width = this.halfSize.x * 2;
 	this.rect.height = this.halfSize.y * 2;
 }
+
+RigidBody.prototype.clearForces = function()	{
+	this.angularVelocity = 0;
+	this.torque = 0;
+	this.velocity = new Vec();
+};
 
 RigidBody.prototype.setLocation = function(position, angle)	{
 	this.position = position;

@@ -88,6 +88,10 @@ Vec.rotate = function(vec1, angle) {
 	return vec;
 };
 
+Vec.prototype.getAngle = function() {
+	return Math.atan2(this.y, this.x);
+};
+
 //project this vector on to vec
 Vec.prototype.project = function(vec2) {
 	var thisDotV = Vec.dotProduct(this, vec2);

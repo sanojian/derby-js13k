@@ -142,7 +142,8 @@ Car.prototype.damagePoint = function(collisionV, j, cp, pts) {
 	}
 
 	this.health += damage;
-	if (this.health < 0) {
+	if (this.health < 0 && !this.dead) {
+		this.dead = true;
 		addFire(this);
 		aa.play('bigExplosion');
 	}

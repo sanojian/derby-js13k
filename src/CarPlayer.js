@@ -6,8 +6,6 @@ function CarPlayer(halfSize, mass, color, color2) {
 
 	Car.call(this, halfSize, mass, color, color2);
 
-	//this.audioIndex = aa.loop('engine');
-
 }
 CarPlayer.prototype = Object.create(Car.prototype);
 CarPlayer.prototype.constructor = CarPlayer;

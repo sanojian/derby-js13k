@@ -14,6 +14,8 @@ var textsCounter = 0;
 var fire = [];
 var fireCounter = 0;
 
+var curLevel = 0;
+
 var ARENA_WIDTH = 16 * 12;
 var ARENA_HEIGHT = 9 * 12;
 
@@ -39,6 +41,9 @@ function init() {
 	// create muddy background
 	generateNoise(document.getElementById('mudCanvas'), ['#D27D2C', '#854C30']);
 	initAudio();
+
+	aa.volume('engine', 0, 0.3);
+	aa.volume('engine2', 0, 0.3);
 
 	svg1.style.width = innerWidth;
 	svg1.style.height = innerHeight;
@@ -94,7 +99,7 @@ function init() {
 	arena.style.strokeWidth = 10;
 	svg1.appendChild(arena);
 
-	addText(walls[0].rect.width / 2, 5.5, 'Mud Bowl Derby', 10, '#8595A1');
+	addText(walls[0].rect.width / 2, 5.5, 'Mud Bowl Derby', 10, '#DAD45E');
 
 
 	scoreText = addText( 2 * walls[0].rect.width / 3, walls[2].rect.height - 5, 'Score: ' + score, 8, '#8595A1');
@@ -162,9 +167,9 @@ function init() {
 		texts.push({ time: 0, active: false, svg: dmgText, x: 0, y: 0 });
 	}
 
-	//if (hasTouch) {
+	if (hasTouch) {
 		createMobileControls();
-	//}
+	}
 
 	car = new CarPlayer(Vec.divide(new Vec(5, 8), 2), 10, '#597DCE', '#6DC2CA');
 
@@ -193,11 +198,16 @@ function startGame() {
 
 function loadLevel(levelId) {
 
+	curLevel = levelId;
 	var level = DEF_LEVELS[levelId];
 
 	car.setThrottle(0);
 	car.setSteering(0);
 	car.setLocation(new Vec(level.position.x, level.position.y), level.position.angle);
+	car.dead = false;
+	// clear forces
+	car.handleCollision();
+	car.clearForces();
 
 	var i;
 	// clean up existing cars
@@ -230,20 +240,35 @@ function step() {
 
 	var steering = 0;
 	var throttle = 0;
-	if (KEY_LEFT) {
-		steering += 1;
-	}
-	if (KEY_RIGHT) {
-		steering -= 1;
-	}
-	if (KEY_UP) {
-		throttle += 1;
-	}
-	if (KEY_DOWN) {
-		throttle -= 1;
+	if (!car.dead) {
+		if (KEY_LEFT) {
+			steering += 1;
+		}
+		if (KEY_RIGHT) {
+			steering -= 1;
+		}
+		if (KEY_UP) {
+			throttle += 1;
+		}
+		if (KEY_DOWN) {
+			throttle -= 1;
+		}
 	}
 	car.setSteering(steering);
 	car.setThrottle(throttle);
+	if (car.dead || curLevel === 0) {
+		aa.stop('engine', 0);
+		aa.stop('engine2', 0);
+	}
+	else if (throttle) {
+		aa.stop('engine', 0);
+		aa.loop('engine2', 0);
+	}
+	else {
+		aa.stop('engine2', 0);
+		aa.loop('engine', 0);
+
+	}
 
 	var i;
 	for (i=0; i<cars.length; i++) {

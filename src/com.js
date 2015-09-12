@@ -31,7 +31,7 @@ function showLeaders(data) {
 }
 
 function showPlayers(data) {
-	playersText.childNodes[0].textContent = 'Players: ' + data;
+	playersText.childNodes[0].textContent = 'Playing: ' + data;
 }
 
 function postHighScore() {
