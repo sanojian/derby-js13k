@@ -182,6 +182,10 @@ Car.prototype.setThrottle = function(throttle) {
 
 };
 
+Car.prototype.init = function(timeStep) {
+	Car.prototype.update.call(this, timeStep);
+};
+
 Car.prototype.update = function(timeStep) {
 
 	if (this.health < 500 && this.smokeTimer < 0) {

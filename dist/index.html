@@ -6,7 +6,7 @@
 
     <style>
         html, body { margin:0; padding:0; overflow:hidden }
-        body { width: 100%; height: 100%; background: #346524 }
+        body { width: 100%; height: 100%; background: #346524}
         .popup {
             position: absolute;
             font-family: Impact, Charcoal, sans-serif;
@@ -16,10 +16,23 @@
             font-size: 3em;
             padding: 40px;
         }
+        #svg1 {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 100;
+        }
+        #mudCanvas {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 10;
+        }
         #divHighScoreEntry {
             display: none;
+            z-index: 200;
         }
-         #tdHighScores {
+        #tdHighScores {
              font-size: 0.5em;
         }
         .bigInput {
@@ -27,11 +40,12 @@
             font-size: 1em;
         }
         #divSplash {
-
+            z-index: 200;
         }
     </style>
 </head>
 <body onload="init()">
+    <canvas id="mudCanvas" width="256" height="256"></canvas>
     <svg id="svg1" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <radialGradient id="screen1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
@@ -50,7 +64,6 @@
             </radialGradient>
         </defs>
     </svg>
-    <canvas id="mudCanvas" width="256" height="256" style="display: none;"></canvas>
     <div id="divHighScoreEntry" class="popup">
         <span>New high score!</span><br>
         <input id="txtPlayerName" class="bigInput" placeholder="Your name" /><br>

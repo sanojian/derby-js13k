@@ -27,7 +27,6 @@ function showLeaders(data) {
 
 	var scoreTable = document.getElementById('tdHighScores');
 	scoreTable.innerHTML = html;
-	console.log(data);
 }
 
 function showPlayers(data) {

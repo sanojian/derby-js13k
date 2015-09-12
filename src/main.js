@@ -15,6 +15,8 @@ var fire = [];
 var fireCounter = 0;
 
 var curLevel = 0;
+var frame = 0;
+var countDown;
 
 var ARENA_WIDTH = 16 * 12;
 var ARENA_HEIGHT = 9 * 12;
@@ -34,12 +36,16 @@ var hasTouch = !!('ontouchstart' in window);
 // enable vibration support
 navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 
-var highScoreDiv, splashDiv;
+var highScoreDiv, splashDiv, mudCanvas;
 
 function init() {
 
 	// create muddy background
-	generateNoise(document.getElementById('mudCanvas'), ['#D27D2C', '#854C30']);
+	////mudCanvas = document.getElementById('mudCanvas');
+	//mudCanvas.width = innerWidth;
+	//mudCanvas.height = innerHeight;
+	//generateNoise(mudCanvas, ['#D27D2C', '#854C30']);
+
 	initAudio();
 
 	aa.volume('engine', 0, 0.3);
@@ -61,7 +67,6 @@ function init() {
 	var scale = Math.min(scaleX, scaleY);
 
 	svg1.setAttribute('viewBox', '0 0 ' + ARENA_WIDTH + ' ' + ARENA_HEIGHT);
-
 
 	// prevent copy paste controls
 	document.body.oncopy = function() { return false; };
@@ -95,6 +100,7 @@ function init() {
 	arena.setAttribute('y', 5);
 	arena.setAttribute('rx', 10);
 	arena.style.fill = '#D27D2C';
+	//arena.style.fillOpacity = 0;
 	arena.style.stroke = '#140C1C';
 	arena.style.strokeWidth = 10;
 	svg1.appendChild(arena);
@@ -105,6 +111,8 @@ function init() {
 	scoreText = addText( 2 * walls[0].rect.width / 3, walls[2].rect.height - 5, 'Score: ' + score, 8, '#8595A1');
 
 	playersText = addText( 4 * walls[0].rect.width / 5, 6, 'Players: ' + score, 8, '#8595A1');
+
+	countDownText = addText( walls[0].rect.width / 2, walls[2].rect.height / 2, '3', 16, '#DEEED6');
 
 	var healthBox = document.createElementNS(svgNS, "rect");
 	healthBox.setAttribute('width', walls[0].rect.width/3);
@@ -200,6 +208,10 @@ function loadLevel(levelId) {
 
 	curLevel = levelId;
 	var level = DEF_LEVELS[levelId];
+	if (!level) {
+		curLevel--;
+		level = DEF_LEVELS[curLevel];
+	}
 
 	car.setThrottle(0);
 	car.setSteering(0);
@@ -208,6 +220,7 @@ function loadLevel(levelId) {
 	// clear forces
 	car.handleCollision();
 	car.clearForces();
+	car.init(0);
 
 	var i;
 	// clean up existing cars
@@ -225,6 +238,7 @@ function loadLevel(levelId) {
 		carAi.setSteering(0);
 		carAi.setLocation(new Vec(level.opponents[i].x, level.opponents[i].y), level.opponents[i].angle);
 		cars.push(carAi);
+		carAi.init(0);
 	}
 
 	// move effects to top
@@ -232,8 +246,24 @@ function loadLevel(levelId) {
 
 	loading = false;
 	keepPlaying = true;
-	requestAnimationFrame(step);
 
+	if (curLevel !== 0) {
+		countDown = 3;
+		countDownText.style.opacity = 1;
+		countDownText.childNodes[0].textContent = countDown;
+		svg1.appendChild(countDownText);
+		var countDownInterval = setInterval(function () {
+			countDown--;
+			if (countDown === 0) {
+				countDownText.style.opacity = 0;
+				clearInterval(countDownInterval);
+				requestAnimationFrame(step);
+			}
+			else {
+				countDownText.childNodes[0].textContent = countDown;
+			}
+		}, 1000);
+	}
 }
 
 function step() {
@@ -262,16 +292,16 @@ function step() {
 	}
 	else if (throttle) {
 		aa.stop('engine', 0);
-		aa.loop('engine2', 0);
+		//aa.loop('engine2', 0);
 	}
 	else {
 		aa.stop('engine2', 0);
-		aa.loop('engine', 0);
+		//aa.loop('engine', 0);
 
 	}
 
 	var i;
-	for (i=0; i<cars.length; i++) {
+	for (i = 0; i < cars.length; i++) {
 		cars[i].update(20 / 1000);
 	}
 
@@ -364,6 +394,10 @@ function step() {
 	animateSmoke();
 	animateFire();
 	animateText();
+	//if (frame % 10 === 0) {
+	//	drawMud();
+	//}
+	frame++;
 
 	// check if level over
 	var carsLeft = 0;
@@ -377,7 +411,7 @@ function step() {
 		loading = true;
 		setTimeout(function() {
 			keepPlaying = false;
-			setTimeout(function() { loadLevel(2); }, 1000);
+			setTimeout(function() { loadLevel(curLevel+1); }, 1000);
 		}, 3000);
 	}
 	else if (keepPlaying && !loading && car.health < 0) {

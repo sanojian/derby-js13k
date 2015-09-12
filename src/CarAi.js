@@ -5,6 +5,8 @@
 function CarAi(halfSize, mass, color, color2, personality) {
 
 	this.personality = personality;
+	this.target = car;
+	this.frameCount = 0;
 
 	Car.call(this, halfSize, mass, color, color2);
 
@@ -17,9 +19,40 @@ CarAi.prototype.getAngleToCar = function(targetCar) {
 	return Math.atan2(targetCar.position.y - this.position.y, targetCar.position.x - this.position.x) - Math.PI/2;
 };
 
+CarAi.prototype.attackTarget = function(direction) {
+	// attack player
+	var angleToPlayer = this.getAngleToCar(this.target) + (direction < 0 ? Math.PI : 0);
+	angleToPlayer = angleToPlayer < 0 ? angleToPlayer + 2 * Math.PI : angleToPlayer;
+	angleToPlayer = angleToPlayer > 2 * Math.PI ? angleToPlayer - 2 * Math.PI : angleToPlayer;
+	this.angle = this.angle < 0 ? this.angle + 2 * Math.PI : this.angle;
+	this.angle = this.angle > 2 * Math.PI ? this.angle - 2 * Math.PI : this.angle;
+
+	if (Math.abs(this.angle - angleToPlayer) < 0.2) {
+		this.setSteering(0);
+		this.setThrottle(0.7 * direction);
+	}
+	else if (this.angle > angleToPlayer) {
+		this.setSteering(1 * direction);
+		this.setThrottle(0.5 * direction);
+	}
+	else {
+		this.setSteering(-1 * direction);
+		this.setThrottle(0.5 * direction);
+
+	}
+};
+
+
 CarAi.prototype.update = function(timeStep) {
 
 	if (this.health > 0) {
+
+		if (this.frameCount % 360 === 0) {
+			var newTarget = Math.floor(Math.random() * cars.length);
+			if (cars[newTarget] !== this) {
+				this.target = cars[newTarget];
+			}
+		}
 
 		var angleToPlayer;
 		if (this.personality === 'circles') {
@@ -27,50 +60,27 @@ CarAi.prototype.update = function(timeStep) {
 			this.setThrottle(1);
 		}
 		else if (this.personality === 'kamikazi') {
-			// attack player
-			angleToPlayer = this.getAngleToCar(car);
-			angleToPlayer = angleToPlayer < 0 ? angleToPlayer + 2 * Math.PI : angleToPlayer;
-			angleToPlayer = angleToPlayer > 2 * Math.PI ? angleToPlayer - 2 * Math.PI : angleToPlayer;
-			this.angle = this.angle < 0 ? this.angle + 2 * Math.PI : this.angle;
-			this.angle = this.angle > 2 * Math.PI ? this.angle - 2 * Math.PI : this.angle;
-
-			if (Math.abs(this.angle - angleToPlayer) < 0.2) {
-				this.setSteering(0);
-				this.setThrottle(0.7);
-			}
-			else if (this.angle > angleToPlayer) {
-				this.setSteering(1);
-				this.setThrottle(0.5);
-			}
-			else {
-				this.setSteering(-1);
-				this.setThrottle(0.5);
-
-			}
+			this.attackTarget(1);
 		}
 		else if (this.personality === 'rearakazi') {
-			// attack player
-			angleToPlayer = this.getAngleToCar(car) + Math.PI;
-			angleToPlayer = angleToPlayer < 0 ? angleToPlayer + 2 * Math.PI : angleToPlayer;
-			angleToPlayer = angleToPlayer > 2 * Math.PI ? angleToPlayer - 2 * Math.PI : angleToPlayer;
-			this.angle = this.angle < 0 ? this.angle + 2 * Math.PI : this.angle;
-			this.angle = this.angle > 2 * Math.PI ? this.angle - 2 * Math.PI : this.angle;
-
-			if (Math.abs(this.angle - angleToPlayer) < 0.2) {
-				this.setSteering(0);
-				this.setThrottle(-0.7);
-			}
-			else if (this.angle > angleToPlayer) {
-				this.setSteering(-1);
-				this.setThrottle(-0.5);
+			this.attackTarget(-1);
+		}
+		else if (this.personality === 'erratic') {
+			if (Math.floor(this.frameCount/360) % 2 === 1) {
+				this.attackTarget(1);
 			}
 			else {
-				this.setSteering(1);
-				this.setThrottle(-0.5);
-
+				this.attackTarget(-1);
+			}
+		}
+		else if (this.personality === 'stopngo') {
+			if (Math.floor(this.frameCount/240) % 2 === 1) {
+				this.attackTarget(-1);
 			}
 		}
 	}
+
+	this.frameCount++;
 
 	Car.prototype.update.call(this, timeStep);
 

@@ -110,23 +110,35 @@ function updateGradient(grad, car) {
 	grad.setAttribute('gradientTransform', 'rotate(' + (-car.angle * 180/Math.PI) + ' ' + 0.5 + ' ' + 0.5 + ')');
 }
 
+function drawMud() {
+	var ctx = mudCanvas.getContext("2d");
+
+	for (var i=0; i<cars.length; i++) {
+		ctx.fillStyle = '#854C30';
+		ctx.rect(cars[i].position.x * innerWidth/ARENA_WIDTH, cars[i].position.y * innerHeight/ARENA_HEIGHT, 2, 2);
+		ctx.stroke();
+	}
+
+}
+
 function generateNoise(canvas, colors) {
 	var ctx = canvas.getContext("2d");
 
-	//ctx.scale(4, 2);
-	for(i=0;i<128;i++) {
-		for(j=0;j<128;j++) {
+	ctx.fillStyle = colors[0];
+	ctx.rect(0, 0, canvas.width, canvas.height);
+	ctx.fill();
+	/*for(var i=0; i<canvas.width; i++) {
+		for(var j=0; j<canvas.height; j++) {
 			if (Math.random() < 0.5) {
 				var num = Math.floor(Math.random() * colors.length);
 				ctx.fillStyle = colors[num];
 				var r = Math.ceil(Math.random()*3);
-				//ctx.fillRect(i*2, j*2, 2, 2);
 				ctx.beginPath();
 				ctx.arc(i * 2, j * 2, r, 0, r * Math.PI, false);
 				ctx.fill();
 			}
 		}
-	}
+	}*/
 
 	//document.body.style.backgroundImage = 'url(' + canvas.toDataURL("image/png") + ')';
 

@@ -25,6 +25,11 @@ socketio.on('connection', function(socket){
 		socket.emit('leaders', highScores);
 	});
 
+	socket.on('clearScores', function(){
+		highScores = [];
+		db('highScores', highScores);
+	});
+
 	socket.on('score', function(data){
 
 		for (var i=0; i<highScores.length; i++) {
