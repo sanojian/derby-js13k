@@ -120,12 +120,12 @@ Car.prototype.drawBody = function(bodyType, halfSize, gradientId) {
 	else if (bodyType === 'wagon') {
 		this.polyChassisPoints = [
 			new Vec(this.rect.x + this.rect.width/8,this.rect.y - this.rect.height/8),
-			new Vec(this.rect.x,this.rect.y),
+			new Vec(this.rect.x,this.rect.y - this.rect.height/16),
 			new Vec(this.rect.x, this.rect.y + 19*this.rect.height/16),
 			new Vec(this.rect.x + this.rect.width/4, this.rect.y + 5*this.rect.height/4),
 			new Vec(this.rect.x + 3*this.rect.width/4, this.rect.y + 5*this.rect.height/4),
 			new Vec(this.rect.x + this.rect.width, this.rect.y  + 19*this.rect.height/16),
-			new Vec(this.rect.x + this.rect.width, this.rect.y),
+			new Vec(this.rect.x + this.rect.width, this.rect.y - this.rect.height/16),
 			new Vec(this.rect.x + 7*this.rect.width/8, this.rect.y - this.rect.height/8)
 		];
 		path = 'M ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
@@ -346,11 +346,11 @@ Car.prototype.update = function(timeStep) {
 
 	if (this.health < 500 && this.smokeTimer < 0) {
 		addSmoke(this.position.x, this.position.y);
-		if (this.health < 0) {
-			this.smokeTimer = 300;
+		if (this.health <= 0) {
+			this.smokeTimer = 30;
 		}
 		else if (this.health < 200) {
-			this.smokeTimer = 30;
+			this.smokeTimer = 70;
 		}
 		else {
 			this.smokeTimer = 100;
