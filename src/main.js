@@ -24,6 +24,7 @@ var ARENA_HEIGHT = 9 * 12;
 var svgNS = 'http://www.w3.org/2000/svg';
 var svgEffects, healthBar;
 var healthBarMaxWidth;
+var selectBox;
 var score = 0;
 var scoreText, playersText;
 var aa;
@@ -55,8 +56,6 @@ function init() {
 	svg1.style.height = innerHeight;
 
 	highScoreDiv = document.getElementById('divHighScoreEntry');
-	highScoreDiv.style.left = (innerWidth/2 - highScoreDiv.offsetWidth/2) + 'px';
-	highScoreDiv.style.top = (innerHeight/2 - highScoreDiv.offsetHeight/2) + 'px';
 
 	splashDiv = document.getElementById('divSplash');
 	splashDiv.style.left = (innerWidth/2 - splashDiv.offsetWidth/2) + 'px';
@@ -107,6 +106,13 @@ function init() {
 
 	addText(walls[0].rect.width / 2, 5.5, 'Mud Bowl Derby', 10, '#DAD45E');
 
+
+	selectBox = document.createElementNS(svgNS, "rect");
+	selectBox.style.fillOpacity = 0;
+	selectBox.style.opacity = 0;
+	selectBox.style.stroke = '#6DAA2C';
+	selectBox.style.strokeWidth = 2;
+	svg1.appendChild(selectBox);
 
 	scoreText = addText( 2 * walls[0].rect.width / 3, walls[2].rect.height - 5, 'Score: ' + score, 8, '#8595A1');
 
@@ -179,7 +185,7 @@ function init() {
 		createMobileControls();
 	}
 
-	car = new CarPlayer(Vec.divide(new Vec(5, 8), 2), 10, '#597DCE', '#6DC2CA');
+	car = new CarPlayer(Vec.divide(new Vec(5, 8), 2), 10, '#597DCE', '#6DC2CA', 'sport');
 
 	cars.push(car);
 
@@ -233,7 +239,7 @@ function loadLevel(levelId) {
 	for (i=0; i<level.opponents.length; i++) {
 		var aiName = level.opponents[i].ai || 'default';
 		var ai = DEFS_AI[aiName];
-		var carAi = new CarAi(Vec.divide(new Vec(ai.width, ai.height), 2), ai.mass, ai.color_pri, ai.color_sec, aiName);
+		var carAi = new CarAi(Vec.divide(new Vec(ai.width, ai.height), 2), ai.mass, ai.color_pri, ai.color_sec, aiName, ai.body);
 		carAi.setThrottle(0);
 		carAi.setSteering(0);
 		carAi.setLocation(new Vec(level.opponents[i].x, level.opponents[i].y), level.opponents[i].angle);
@@ -248,18 +254,37 @@ function loadLevel(levelId) {
 	keepPlaying = true;
 
 	if (curLevel !== 0) {
+		var selectW = 40;
+		selectBox.style.opacity = 1;
+		var selectInterval = setInterval(function() {
+			var selectX = car.position.x - selectW/2;
+			var selectY = car.position.y - selectW/2;
+			if (selectW < 5) {
+				clearInterval(selectInterval);
+				selectBox.style.opacity = 0;
+			}
+			selectBox.setAttribute('x', selectX);
+			selectBox.setAttribute('y', selectY);
+			selectBox.setAttribute('width', selectW);
+			selectBox.setAttribute('height', selectW);
+			selectW -= selectW/7;
+		}, 100);
+
 		countDown = 3;
 		countDownText.style.opacity = 1;
 		countDownText.childNodes[0].textContent = countDown;
+		aa.play('bip');
 		svg1.appendChild(countDownText);
 		var countDownInterval = setInterval(function () {
 			countDown--;
 			if (countDown === 0) {
+				aa.play('bee');
 				countDownText.style.opacity = 0;
 				clearInterval(countDownInterval);
 				requestAnimationFrame(step);
 			}
 			else {
+				aa.play('bip');
 				countDownText.childNodes[0].textContent = countDown;
 			}
 		}, 1000);
@@ -433,6 +458,8 @@ function handleEndGame() {
 
 	if (bHighScore && !localStorage.derbyPlayerName) {
 		highScoreDiv.style.display = 'block';
+		highScoreDiv.style.left = (innerWidth/2 - highScoreDiv.offsetWidth/2) + 'px';
+		highScoreDiv.style.top = (innerHeight/2 - highScoreDiv.offsetHeight/2) + 'px';
 		return;
 	}
 	setTimeout(function() {

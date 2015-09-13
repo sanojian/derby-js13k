@@ -2,13 +2,13 @@
  * Created by jonas on 2015-08-17.
  */
 
-function CarAi(halfSize, mass, color, color2, personality) {
+function CarAi(halfSize, mass, color, color2, personality, bodyType) {
 
 	this.personality = personality;
 	this.target = car;
 	this.frameCount = 0;
 
-	Car.call(this, halfSize, mass, color, color2);
+	Car.call(this, halfSize, mass, color, color2, bodyType);
 
 
 }

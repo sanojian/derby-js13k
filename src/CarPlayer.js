@@ -2,9 +2,9 @@
  * Created by jonas on 2015-08-17.
  */
 
-function CarPlayer(halfSize, mass, color, color2) {
+function CarPlayer(halfSize, mass, color, color2, bodyType) {
 
-	Car.call(this, halfSize, mass, color, color2);
+	Car.call(this, halfSize, mass, color, color2, bodyType);
 
 }
 CarPlayer.prototype = Object.create(Car.prototype);

@@ -2,7 +2,7 @@
  * Created by jonas on 2015-08-17.
  */
 
-function Car(halfSize, mass, color, color2) {
+function Car(halfSize, mass, color, color2, bodyType) {
 
 	this.health = 1000;
 	this.smokeTimer = 0;
@@ -38,48 +38,8 @@ function Car(halfSize, mass, color, color2) {
 	]);
 
 	this.svgChassis = document.createElementNS (svgNS, "path");
-	this.polyChassisPoints = [
-		new Vec(this.rect.x + this.rect.width/8,this.rect.y - this.rect.height/8),
-		new Vec(this.rect.x,this.rect.y),
-		new Vec(this.rect.x, this.rect.y + this.rect.height),
-		new Vec(this.rect.x + this.rect.width/4, this.rect.y + 5*this.rect.height/4),
-		new Vec(this.rect.x + 3*this.rect.width/4, this.rect.y + 5*this.rect.height/4),
-		new Vec(this.rect.x + this.rect.width, this.rect.y + this.rect.height),
-		new Vec(this.rect.x + this.rect.width, this.rect.y),
-		new Vec(this.rect.x + 7*this.rect.width/8, this.rect.y - this.rect.height/8)
-	];
-	var path = 'M ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
-	for (var pts=0; pts<this.polyChassisPoints.length; pts++) {
-		path += ' L ' + this.polyChassisPoints[pts].x + ',' + this.polyChassisPoints[pts].y;
-	}
-	path += ' L ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
-	this.svgChassis.setAttribute('d', path);
 
-	this.svgChassis.style.fill = 'url(#' + gradientId + ')';
-	this.svgChassis.style.stroke = 'black';
-	this.svgChassis.style.strokeWidth = 0.25;
-	this.svgObj.appendChild(this.svgChassis);
-
-	var cockpit = document.createElementNS (svgNS, "rect");
-	cockpit.setAttribute('x', -halfSize.x + 0.25);
-	cockpit.setAttribute('y', 0-halfSize.y/2);
-	cockpit.setAttribute('width', halfSize.x*2 - 0.5);
-	cockpit.setAttribute('height', halfSize.y/1);
-	cockpit.setAttribute('rx', 1);
-	cockpit.style.fill = 'url(#screen1)';
-	cockpit.style.stroke = 'black';
-	cockpit.style.strokeWidth = 0.25;
-	this.svgObj.appendChild(cockpit);
-	var roof = document.createElementNS (svgNS, "rect");
-	roof.setAttribute('x', 0-2*halfSize.x/3);
-	roof.setAttribute('y', 0-3*halfSize.y/4);
-	roof.setAttribute('width', 4*halfSize.x/3);
-	roof.setAttribute('height', halfSize.y/1);
-	roof.setAttribute('rx', 1);
-	roof.style.fill = 'url(#' + gradientId + ')';
-	roof.style.stroke = 'black';
-	roof.style.strokeWidth = 0.25;
-	this.svgObj.appendChild(roof);
+	this.drawBody(bodyType, halfSize, gradientId);
 
 	this.brakes = [];
 	for (i=0; i<2; i++) {
@@ -108,6 +68,202 @@ function Car(halfSize, mass, color, color2) {
 }
 Car.prototype = Object.create(Vehicle.prototype);
 Car.prototype.constructor = Car;
+
+Car.prototype.drawBody = function(bodyType, halfSize, gradientId) {
+
+	var cockpit, roof, path, pts;
+	if (bodyType === 'sport') {
+		this.polyChassisPoints = [
+			new Vec(this.rect.x + this.rect.width/8,this.rect.y - this.rect.height/8),
+			new Vec(this.rect.x,this.rect.y),
+			new Vec(this.rect.x, this.rect.y + this.rect.height),
+			new Vec(this.rect.x + this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + 3*this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + this.rect.width, this.rect.y + this.rect.height),
+			new Vec(this.rect.x + this.rect.width, this.rect.y),
+			new Vec(this.rect.x + 7*this.rect.width/8, this.rect.y - this.rect.height/8)
+		];
+		path = 'M ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		for (pts=0; pts<this.polyChassisPoints.length; pts++) {
+			path += ' L ' + this.polyChassisPoints[pts].x + ',' + this.polyChassisPoints[pts].y;
+		}
+		path += ' L ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		this.svgChassis.setAttribute('d', path);
+
+		this.svgChassis.style.fill = 'url(#' + gradientId + ')';
+		this.svgChassis.style.stroke = 'black';
+		this.svgChassis.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(this.svgChassis);
+
+		cockpit = document.createElementNS (svgNS, "rect");
+		cockpit.setAttribute('x', -halfSize.x + 0.25);
+		cockpit.setAttribute('y', 0-halfSize.y/2);
+		cockpit.setAttribute('width', halfSize.x*2 - 0.5);
+		cockpit.setAttribute('height', halfSize.y/1);
+		cockpit.setAttribute('rx', 1);
+		cockpit.style.fill = 'url(#screen1)';
+		cockpit.style.stroke = 'black';
+		cockpit.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(cockpit);
+		roof = document.createElementNS (svgNS, "rect");
+		roof.setAttribute('x', 0-2*halfSize.x/3);
+		roof.setAttribute('y', 0-3*halfSize.y/4);
+		roof.setAttribute('width', 4*halfSize.x/3);
+		roof.setAttribute('height', halfSize.y/1);
+		roof.setAttribute('rx', 1);
+		roof.style.fill = 'url(#' + gradientId + ')';
+		roof.style.stroke = 'black';
+		roof.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(roof);
+
+	}
+	else if (bodyType === 'wagon') {
+		this.polyChassisPoints = [
+			new Vec(this.rect.x + this.rect.width/8,this.rect.y - this.rect.height/8),
+			new Vec(this.rect.x,this.rect.y),
+			new Vec(this.rect.x, this.rect.y + 19*this.rect.height/16),
+			new Vec(this.rect.x + this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + 3*this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + this.rect.width, this.rect.y  + 19*this.rect.height/16),
+			new Vec(this.rect.x + this.rect.width, this.rect.y),
+			new Vec(this.rect.x + 7*this.rect.width/8, this.rect.y - this.rect.height/8)
+		];
+		path = 'M ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		for (pts=0; pts<this.polyChassisPoints.length; pts++) {
+			path += ' L ' + this.polyChassisPoints[pts].x + ',' + this.polyChassisPoints[pts].y;
+		}
+		path += ' L ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		this.svgChassis.setAttribute('d', path);
+
+		this.svgChassis.style.fill = 'url(#' + gradientId + ')';
+		this.svgChassis.style.stroke = 'black';
+		this.svgChassis.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(this.svgChassis);
+
+		cockpit = document.createElementNS (svgNS, "rect");
+		cockpit.setAttribute('x', -halfSize.x + 0.25);
+		cockpit.setAttribute('y', 0-halfSize.y);
+		cockpit.setAttribute('width', halfSize.x*2 - 0.5);
+		cockpit.setAttribute('height', 7*halfSize.y/4);
+		cockpit.setAttribute('rx', 1);
+		cockpit.style.fill = 'url(#screen1)';
+		cockpit.style.stroke = 'black';
+		cockpit.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(cockpit);
+		roof = document.createElementNS (svgNS, "rect");
+		roof.setAttribute('x', 0-5*halfSize.x/6);
+		roof.setAttribute('y', 0-7*halfSize.y/8);
+		roof.setAttribute('width', 5*halfSize.x/3);
+		roof.setAttribute('height', 4*halfSize.y/3);
+		roof.setAttribute('rx', 1);
+		roof.style.fill = 'url(#' + gradientId + ')';
+		roof.style.stroke = 'black';
+		roof.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(roof);
+
+	}
+	else if (bodyType === 'sedan' || !bodyType) {
+		this.polyChassisPoints = [
+			new Vec(this.rect.x + this.rect.width/8,this.rect.y - this.rect.height/8),
+			new Vec(this.rect.x,this.rect.y),
+			new Vec(this.rect.x, this.rect.y + 19*this.rect.height/16),
+			new Vec(this.rect.x + this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + 3*this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + this.rect.width, this.rect.y  + 19*this.rect.height/16),
+			new Vec(this.rect.x + this.rect.width, this.rect.y),
+			new Vec(this.rect.x + 7*this.rect.width/8, this.rect.y - this.rect.height/8)
+		];
+		path = 'M ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		for (pts=0; pts<this.polyChassisPoints.length; pts++) {
+			path += ' L ' + this.polyChassisPoints[pts].x + ',' + this.polyChassisPoints[pts].y;
+		}
+		path += ' L ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		this.svgChassis.setAttribute('d', path);
+
+		this.svgChassis.style.fill = 'url(#' + gradientId + ')';
+		this.svgChassis.style.stroke = 'black';
+		this.svgChassis.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(this.svgChassis);
+
+		cockpit = document.createElementNS (svgNS, "rect");
+		cockpit.setAttribute('x', -halfSize.x + 0.25);
+		cockpit.setAttribute('y', 0-3*halfSize.y/4);
+		cockpit.setAttribute('width', halfSize.x*2 - 0.5);
+		cockpit.setAttribute('height', 13*halfSize.y/8);
+		cockpit.setAttribute('rx', 1);
+		cockpit.style.fill = 'url(#screen1)';
+		cockpit.style.stroke = 'black';
+		cockpit.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(cockpit);
+		roof = document.createElementNS (svgNS, "rect");
+		roof.setAttribute('x', 0-5*halfSize.x/6);
+		roof.setAttribute('y', 0-1*halfSize.y/2);
+		roof.setAttribute('width', 5*halfSize.x/3);
+		roof.setAttribute('height', 7*halfSize.y/6);
+		roof.setAttribute('rx', 1);
+		roof.style.fill = 'url(#' + gradientId + ')';
+		roof.style.stroke = 'black';
+		roof.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(roof);
+
+	}
+	else if (bodyType === 'pickup') {
+		this.polyChassisPoints = [
+			new Vec(this.rect.x + this.rect.width/8,this.rect.y - this.rect.height/8),
+			new Vec(this.rect.x,this.rect.y),
+			new Vec(this.rect.x, this.rect.y + 9*this.rect.height/8),
+			new Vec(this.rect.x + this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + 3*this.rect.width/4, this.rect.y + 5*this.rect.height/4),
+			new Vec(this.rect.x + this.rect.width, this.rect.y + 9*this.rect.height/8),
+			new Vec(this.rect.x + this.rect.width, this.rect.y),
+			new Vec(this.rect.x + 7*this.rect.width/8, this.rect.y - this.rect.height/8)
+		];
+		path = 'M ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		for (pts=0; pts<this.polyChassisPoints.length; pts++) {
+			path += ' L ' + this.polyChassisPoints[pts].x + ',' + this.polyChassisPoints[pts].y;
+		}
+		path += ' L ' + this.polyChassisPoints[0].x + ',' + this.polyChassisPoints[0].y;
+		this.svgChassis.setAttribute('d', path);
+
+		this.svgChassis.style.fill = 'url(#' + gradientId + ')';
+		this.svgChassis.style.stroke = 'black';
+		this.svgChassis.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(this.svgChassis);
+
+		cockpit = document.createElementNS (svgNS, "rect");
+		cockpit.setAttribute('x', -halfSize.x + 0.25);
+		cockpit.setAttribute('y', 0);
+		cockpit.setAttribute('width', halfSize.x*2 - 0.5);
+		cockpit.setAttribute('height', halfSize.y/1);
+		cockpit.setAttribute('rx', 1);
+		cockpit.style.fill = 'url(#screen1)';
+		cockpit.style.stroke = 'black';
+		cockpit.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(cockpit);
+		roof = document.createElementNS (svgNS, "rect");
+		roof.setAttribute('x', 0-2*halfSize.x/3);
+		roof.setAttribute('y', 0-1*halfSize.y/8);
+		roof.setAttribute('width', 4*halfSize.x/3);
+		roof.setAttribute('height', 7*halfSize.y/8);
+		roof.setAttribute('rx', 1);
+		roof.style.fill = 'url(#' + gradientId + ')';
+		roof.style.stroke = 'black';
+		roof.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(roof);
+		var bed = document.createElementNS (svgNS, "rect");
+		bed.setAttribute('x', -halfSize.x + 0.25*2);
+		bed.setAttribute('y', -halfSize.y);
+		bed.setAttribute('width', halfSize.x*2 - 0.25*4);
+		bed.setAttribute('height', 15*halfSize.y/16);
+		bed.setAttribute('rx', 0.1);
+		bed.style.fill = '#757161';
+		bed.style.stroke = 'black';
+		bed.style.strokeWidth = 0.25;
+		this.svgObj.appendChild(bed);
+
+	}
+
+};
 
 Car.prototype.kill = function() {
 	var thisCar = document.getElementById(this.carId);
