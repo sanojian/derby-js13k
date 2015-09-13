@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="./derby.js"></script>
+    <script src="./derby.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
@@ -67,7 +67,7 @@
     </svg>
     <div id="divHighScoreEntry" class="popup">
         <span>New high score!</span><br>
-        <input id="txtPlayerName" class="bigInput" placeholder="Your name" /><br>
+        <input id="txtPlayerName" class="bigInput" placeholder="Your name" maxlength="20" /><br>
         <button class="bigInput" onclick="postHighScore()">Submit</button>
     </div>
     <div id="divSplash" class="popup">
