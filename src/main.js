@@ -191,6 +191,7 @@ function init() {
 
 	initSteering();
 	loadLevel(0);
+	playSong('intro');
 
 	try {
 		connect();
@@ -434,6 +435,9 @@ function step() {
 
 	if (keepPlaying && !loading && carsLeft === 0) {
 		loading = true;
+		// WIN!!
+		playSong('rockyou');
+
 		setTimeout(function() {
 			keepPlaying = false;
 			setTimeout(function() { loadLevel(curLevel+1); }, 1000);
@@ -441,6 +445,8 @@ function step() {
 	}
 	else if (keepPlaying && !loading && car.health < 0) {
 		loading = true;
+		// LOSE!
+		playSong('lost');
 		setTimeout(function() {
 			handleEndGame();
 		}, 3000);
